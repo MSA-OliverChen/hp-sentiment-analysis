@@ -594,11 +594,11 @@ app.layout = dbc.Container(
         dbc.Row(
             children=[
                 dbc.Col(html.H1('Harry Potter Sentiment Analysis'),
-                        className='d-flex align-items-center',),
+                        className='d-flex align-items-center'),
                 dbc.Col(filter_component,
                         className='align-items-center')
             ],
-            className='h-10'
+            style={'height': '10%'}
         ),
         dbc.Row(
             children=[
@@ -607,7 +607,7 @@ app.layout = dbc.Container(
                 dbc.Col(wordcloud_component,
                         width=5)
             ],
-            className='h-45'
+            style={'height': '45%'}
         ),
         dbc.Row(
             children=[
@@ -617,7 +617,7 @@ app.layout = dbc.Container(
                                             figure=initial_parallel_fig)],
                         width=7)
             ],
-            className='h-45'
+            style={'height': '45%'}
         )
     ]
 )
