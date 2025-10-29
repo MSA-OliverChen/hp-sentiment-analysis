@@ -598,7 +598,7 @@ app.layout = dbc.Container(
                 dbc.Col(filter_component,
                         className='align-items-center')
             ],
-            style={'height': '10%'}
+            style={'height': '100px'}
         ),
         dbc.Row(
             children=[
