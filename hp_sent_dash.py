@@ -1,15 +1,11 @@
-from dash import Dash, html, dcc, Input, Output
-import os
 import pickle
 from collections import Counter
-from wordcloud import WordCloud
-import pandas as pd
 import polars as pl
-import polars.selectors as cs
-import re
+
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from wordcloud import WordCloud
 from dash import (
     Dash,
     html,
@@ -19,15 +15,12 @@ from dash import (
 )
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+
 from io import BytesIO
 import base64
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-# [Load stylesheets and initialize app]
-# DCC_BOOTSTRAP_CSS = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.8/dbc.min.css"
 load_figure_template('BOOTSTRAP')
 ext_ss = [
     dbc.themes.BOOTSTRAP,
