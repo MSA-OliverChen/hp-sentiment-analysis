@@ -629,6 +629,6 @@ app.layout = dbc.Container(
     ]
 )
 
-DEBUG = True
+DEBUG = False
 if __name__ == '__main__':
     app.run(debug=DEBUG)
