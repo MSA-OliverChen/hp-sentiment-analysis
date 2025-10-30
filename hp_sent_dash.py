@@ -105,7 +105,7 @@ arousal_pad = 0.05 * (arousal_scaled_max - arousal_scaled_min)
 # [Creating Dash components]
 book_nums = list(titles.keys())
 
-filter_component = dcc.Dropdown(
+filter_dropdown_content = dcc.Dropdown(
     id='filter-dropdown',
     multi=True,
     options=[
@@ -113,6 +113,24 @@ filter_component = dcc.Dropdown(
         for i in book_nums
     ],
     value=book_nums,
+    style={
+        'flex-grow': '0',
+        'width': '100%',
+        'fontSize': '97%'
+    }
+)
+
+
+filter_component = html.Div(
+    children=[filter_dropdown_content],
+    style={
+        # Set max height to a value that is slightly more than the dropdown's fixed height
+        # Typically one row of tags is around 38-40px. Use 100% of that small height.
+        'height': '100%',
+        'maxHeight': '100%',
+        # Crucial for preventing vertical spill:
+        'overflow': 'hidden',
+    }
 )
 
 
@@ -125,14 +143,6 @@ def update_dropdown_sorted(selected: list):
         return sorted(selected)
     return selected
 
-
-checklist_box = dbc.Card(
-    children=[
-        dbc.CardHeader('Books'),
-        dbc.CardBody([html.Div(filter_component, className='dbc')])
-    ],
-    className=""
-)
 
 # create an empty dcc.Graph as a placeholder.
 # when the dashboard is created it will use the callback-
@@ -192,7 +202,14 @@ def update_circumplex(selected: list):
         title=dict(text='Valence and Arousal by Book Progress',
                    font=dict(size=24, weight='bold'),
                    x=0.5,
-                   xanchor='center')
+                   # y=0.97,
+                   xanchor='center'),
+        margin={
+            't': 60,
+            'b': 60,
+            'l': 60,
+            'r': 60
+        }
     )
 
     return fig
@@ -245,11 +262,14 @@ initial_line_graph = go.Figure()
 initial_line_graph.update_layout(
     title={'text': "Select a Book Title to View Sentiment Trend",
            'x': 0.5, 'xanchor': 'center'},
-    height=400)
+    autosize=True
+    # height=400
+)
 
 books_line_graph_component = dcc.Graph(
     id='books_line_graph',
-    figure=initial_line_graph)
+    figure=initial_line_graph,
+    style={'height': '100%', 'width': '100%'})
 
 # Map book numbers to names
 
@@ -267,7 +287,9 @@ def update_graph(selected_book_nums):
         return go.Figure().update_layout(
             title={'text': "Select one or more Book Titles.",
                    'x': 0.5, 'xanchor': 'center'},
-            height=400)
+            # height=400
+            autosize=True
+        )
 
     # The dropdown returns book numbers (integers) --> convert them to the full titles (strings)
     selected_titles = get_titles_from_nums(selected_book_nums)
@@ -324,14 +346,21 @@ def update_graph(selected_book_nums):
     books_line_graph.update_layout(
         title={
             'text': "Compound Sentiment Scores Over Time",
-            'y': 0.98,
+            'y': 0.97,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
             'font': {'size': 24, 'weight': 'bold'}},
         xaxis_title=None, **{f'xaxis{num_books}': {'title': 'Chapter'}},
-        height=520,
-        margin=dict(l=50, r=50, t=80, b=50))
+        # height=520,
+        autosize=True,
+        margin={
+            't': 60,
+            'b': 60,
+            'l': 60,
+            'r': 60
+        }
+    )
 
     return books_line_graph
 
@@ -353,7 +382,7 @@ initial_parallel_fig = make_subplots(
 initial_parallel_fig.update_layout(
     title={'text': "Select one or more books to view sentiment.",
            'x': 0.5, 'xanchor': 'center'},
-    height=450
+    # height=450
 )
 
 # Add axis titles
@@ -362,6 +391,13 @@ initial_parallel_fig.update_yaxes(
 initial_parallel_fig.update_yaxes(
     title_text="Arousal (Percentile)", row=2, col=1)
 initial_parallel_fig.update_xaxes(title_text="Chapter number", row=2, col=1)
+
+parallel_component = dcc.Graph(style={'flex-grow': '1',
+                                      'height': '100%',
+                                      'width': '100%'},
+                               id='parallel-line-plots',
+                               #    figure=initial_parallel_fig
+                               )
 
 # --- THIS IS YOUR NEW, COMBINED CALLBACK ---
 
@@ -373,9 +409,9 @@ initial_parallel_fig.update_xaxes(title_text="Chapter number", row=2, col=1)
 def update_sentiment_graphs(selected_book_nums):
 
     # 1. Handle the case where no books are selected
-    if not selected_book_nums:
-        # Return the empty placeholder figure
-        return initial_parallel_fig
+    # if not selected_book_nums:
+    #     # Return the empty placeholder figure
+    #     return initial_parallel_fig
 
     # 2. Filter your main dataframe (same as before) - note: I removed filter b/c it was deleting parts of my graphs
     filtered_df = chapter_sent_pd  # [
@@ -492,13 +528,21 @@ def update_sentiment_graphs(selected_book_nums):
         title={'text': f"Valence and Arousal Over Time",
                'font': {'size': 24, 'weight': 'bold'},
                'x': 0.5,
+               # 'y': 0.97,
                'xanchor': 'center'},
-        height=450,
+        # height=450,
         legend_title_text='Book',
         xaxis_title=None,  # Hide top x-axis title
         xaxis2_title='Total Chapters Elapsed',  # Show bottom x-axis title
         yaxis_title='Valence (Scaled)',
-        yaxis2_title='Arousal (Scaled)'
+        yaxis2_title='Arousal (Scaled)',
+        autosize=True,
+        margin={
+            't': 60,
+            'b': 60,
+            'l': 60,
+            'r': 60
+        }
     )
 
     # 6. Return the single, combined figure
@@ -512,21 +556,42 @@ with open('character_raw_counts.pkl', 'rb') as fp:
     character_freqs = pickle.load(fp)
 
 wordcloud_img_component = html.Img(id='wordcloud-img-component',
-                                   className='img-fluid')
+                                   className='img-fluid',
+                                   style={
+                                       'flex-grow': '1',
+                                       'max-width': '90%',
+                                       'max-height': '90%',
+                                       'height': 'auto',
+                                       'width': 'auto',
+                                       'objectFit': 'contain',
+                                   })
 
 wordcloud_component = dbc.Card(
     dbc.CardBody(
+        style={
+            'height': '100%',
+            'display': 'flex',
+            'flexDirection': 'column',
+            'padding': '10px'
+        },
         children=[
             html.H3('Characters Wordcloud',
+                    className='mb-1',
                     style={
                         'textAlign': 'center',
                         'fontWeight': 'bold',
-                        'fontSize': '24px'
+                        'fontSize': '24px',
+                        'flex-shrink': '0'
                     }),
             wordcloud_img_component
         ]
     ),
-    className='border-0'
+    style={
+        'height': '100%',
+        'display': 'flex',
+        'flexDirection': 'column'
+    },
+    className='border-0 h-100'
 )
 
 
@@ -589,35 +654,50 @@ def update_wordcloud(selected: list):
 
 # TODO: add new components to layout
 app.layout = dbc.Container(
-    className='dbc h-100',
+    # fluid=True,
+    className='vh-100 vw-80',
+    style={
+        'display': 'flex',
+        'flexDirection': 'column',
+    },
     children=[
         dbc.Row(
+            style={'height': '10%'},
             children=[
                 dbc.Col(html.H1('Harry Potter Sentiment Analysis'),
-                        className='d-flex align-items-center'),
+                        style={'overflow': 'hidden'},
+                        className='d-flex align-items-center'
+                        ),
                 dbc.Col(filter_component,
-                        className='align-items-center')
+                        style={'overflow': 'hidden'},
+                        className='h-90 align-items-center')
             ],
-            style={'height': '100px'}
         ),
         dbc.Row(
+            style={'height': '45%'},
             children=[
                 dbc.Col(books_line_graph_component,
-                        width=7),
+                        width=7,
+                        className=''),
                 dbc.Col(wordcloud_component,
-                        width=5)
+                        # html.H3('placeholder'),
+                        width=5,
+                        className='h-100',
+                        style={
+                            'overflow': 'hidden'
+                        })
             ],
-            style={'height': '45%'}
         ),
         dbc.Row(
+            style={'height': '45%'},
             children=[
                 dbc.Col(circumplex_graph_component,
-                        width=5),
-                dbc.Col(children=[dcc.Graph(id='parallel-line-plots',
-                                            figure=initial_parallel_fig)],
-                        width=7)
+                        width=5,
+                        className='h-100'),
+                dbc.Col(parallel_component,
+                        width=7,
+                        className='h-100')
             ],
-            style={'height': '45%'}
         )
     ]
 )
