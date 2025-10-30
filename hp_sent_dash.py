@@ -31,8 +31,6 @@ app = Dash(__name__,
 app.title = 'Harry Potter Sentiment Analysis'
 
 # [Load in data]
-
-# TODO: change file name as needed
 SENTIMENT_DATA_FILE = 'sentences_sentiment_minmax.csv'
 sent = pl.read_csv(SENTIMENT_DATA_FILE)
 
@@ -103,6 +101,20 @@ arousal_scaled_max = chapter_sent['arousal_scaled'].max()
 arousal_pad = 0.05 * (arousal_scaled_max - arousal_scaled_min)
 
 # [Creating Dash components]
+title_component = html.H1('Harry Potter Sentiment Analysis',
+                          style={
+                              'display': 'flex',
+                              'alignItems': 'center',
+                              'justifyContent': 'center',
+                              'height': '100%',
+                              'overflow': 'hidden',
+                              'flex-grow': '0',
+                              'maxHeight': '10vh',
+                              'fontSize': 'min(2.5vw, 40px)',
+                              'fontWeight': 'bold'
+                          })
+
+
 book_nums = list(titles.keys())
 
 filter_dropdown_content = dcc.Dropdown(
@@ -116,7 +128,7 @@ filter_dropdown_content = dcc.Dropdown(
     style={
         'flex-grow': '0',
         'width': '100%',
-        'fontSize': '97%'
+        'fontSize': '0.8vw'
     }
 )
 
@@ -124,12 +136,13 @@ filter_dropdown_content = dcc.Dropdown(
 filter_component = html.Div(
     children=[filter_dropdown_content],
     style={
-        # Set max height to a value that is slightly more than the dropdown's fixed height
-        # Typically one row of tags is around 38-40px. Use 100% of that small height.
+        'display': 'flex',
+        'alignItems': 'center',
+        'justifyContent': 'center',
         'height': '100%',
-        'maxHeight': '100%',
-        # Crucial for preventing vertical spill:
+        'maxHeight': '10vh',
         'overflow': 'hidden',
+        'flex-grow': '0'
     }
 )
 
@@ -200,12 +213,12 @@ def update_circumplex(selected: list):
     )
     fig.update_layout(
         title=dict(text='Valence and Arousal by Book Progress',
-                   font=dict(size=24, weight='bold'),
+                   font={'size': 20, 'weight': 'bold'},
                    x=0.5,
                    # y=0.97,
                    xanchor='center'),
         margin={
-            't': 60,
+            't': 40,
             'b': 60,
             'l': 60,
             'r': 60
@@ -269,7 +282,12 @@ initial_line_graph.update_layout(
 books_line_graph_component = dcc.Graph(
     id='books_line_graph',
     figure=initial_line_graph,
-    style={'height': '100%', 'width': '100%'})
+    style={
+        'height': '100%',
+        'width': '100%',
+        'display': 'flex',
+        'flex-grow': '0'}
+)
 
 # Map book numbers to names
 
@@ -350,12 +368,12 @@ def update_graph(selected_book_nums):
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'font': {'size': 24, 'weight': 'bold'}},
+            'font': {'size': 20, 'weight': 'bold'}},
         xaxis_title=None, **{f'xaxis{num_books}': {'title': 'Chapter'}},
         # height=520,
         autosize=True,
         margin={
-            't': 60,
+            't': 40,
             'b': 60,
             'l': 60,
             'r': 60
@@ -414,16 +432,10 @@ def update_sentiment_graphs(selected_book_nums):
     #     return initial_parallel_fig
 
     # 2. Filter your main dataframe (same as before) - note: I removed filter b/c it was deleting parts of my graphs
-    filtered_df = chapter_sent_pd  # [
-    #     chapter_sent_pd['book_num'].isin(selected_book_nums)
-    # ]
-    # Filtering strategy:
-    # - We need to index
+    filtered_df = chapter_sent_pd
 
-    #
     # --- 3. Create Valence & Arousal figs (same as before) ---
     # (We use these as temporary "trace generators")
-    #
 
     # --- VALENCE ---
     valence_graph = px.line(filtered_df, x="series_ch_num", y="valence_scaled", color='book_num',
@@ -502,14 +514,11 @@ def update_sentiment_graphs(selected_book_nums):
         hovertext=ar_peak_hover_text, hovertemplate='%{hovertext}<extra></extra>', showlegend=False
     ))
 
-    #
     # --- 4. Create the new subplot figure and copy traces ---
-    #
     parallel_line_plots = make_subplots(
         rows=2,
         cols=1,
-        shared_xaxes=True  # ,
-        # subplot_titles=('Valence over time', 'Arousal over time') # Subplot titles
+        shared_xaxes=True
     )
 
     # Copy all traces from the valence graph to the 1st row
@@ -526,11 +535,10 @@ def update_sentiment_graphs(selected_book_nums):
     # --- 5. Update layout for the combined figure ---
     parallel_line_plots.update_layout(
         title={'text': f"Valence and Arousal Over Time",
-               'font': {'size': 24, 'weight': 'bold'},
+               'font': {'size': 20, 'weight': 'bold'},
                'x': 0.5,
                # 'y': 0.97,
                'xanchor': 'center'},
-        # height=450,
         legend_title_text='Book',
         xaxis_title=None,  # Hide top x-axis title
         xaxis2_title='Total Chapters Elapsed',  # Show bottom x-axis title
@@ -538,7 +546,7 @@ def update_sentiment_graphs(selected_book_nums):
         yaxis2_title='Arousal (Scaled)',
         autosize=True,
         margin={
-            't': 60,
+            't': 40,
             'b': 60,
             'l': 60,
             'r': 60
@@ -580,7 +588,7 @@ wordcloud_component = dbc.Card(
                     style={
                         'textAlign': 'center',
                         'fontWeight': 'bold',
-                        'fontSize': '24px',
+                        'fontSize': '20px',
                         'flex-shrink': '0'
                     }),
             wordcloud_img_component
@@ -623,7 +631,6 @@ def update_wordcloud(selected: list):
 
     def frequency_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
         rank = selected_ranks[word]
-        # print(f'{rank=}, {total_words=}')
         rgba = colormap(rank / (total_words * 1.5))
         r, g, b, _ = [int(c * 255) for c in rgba]
         return f'rgb({r}, {g}, {b})'
@@ -643,18 +650,13 @@ def update_wordcloud(selected: list):
     with BytesIO() as buffer:
         img.save(buffer, format='PNG')
 
-        # 4. Encode the binary data to a Base64 string
         img_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
     base64_uri = f'data:image/png;base64,{img_data}'
-
-    # return the uri to the img src
     return base64_uri
 
 
-# TODO: add new components to layout
 app.layout = dbc.Container(
-    # fluid=True,
     className='vh-100 vw-80',
     style={
         'display': 'flex',
@@ -664,17 +666,17 @@ app.layout = dbc.Container(
         dbc.Row(
             style={'height': '10%'},
             children=[
-                dbc.Col(html.H1('Harry Potter Sentiment Analysis'),
+                dbc.Col(title_component,
                         style={'overflow': 'hidden'},
                         className='d-flex align-items-center'
                         ),
                 dbc.Col(filter_component,
                         style={'overflow': 'hidden'},
-                        className='h-90 align-items-center')
+                        className='h-90 d-flex flex-column align-items-center')
             ],
         ),
         dbc.Row(
-            style={'height': '45%'},
+            style={'height': '50%'},
             children=[
                 dbc.Col(books_line_graph_component,
                         width=7,
@@ -689,7 +691,7 @@ app.layout = dbc.Container(
             ],
         ),
         dbc.Row(
-            style={'height': '45%'},
+            style={'height': '40%'},
             children=[
                 dbc.Col(circumplex_graph_component,
                         width=5,
