@@ -2,6 +2,8 @@
 
 A dashboard demonstrating text and sentiment analysis on the Harry Potter books.
 
+<img width="1325" height="1073" alt="image" src="https://github.com/user-attachments/assets/4a3d784a-57be-411f-87f9-8d0fcc458c24" />
+
 ## Authors
 
 * Oliver Chen ([@oxchen12](https://github.com/oxchen12))
