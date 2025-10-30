@@ -2,6 +2,13 @@
 
 A dashboard demonstrating text and sentiment analysis on the Harry Potter books.
 
+## Authors
+
+* Oliver Chen
+* Hannah Enck
+* Jamil Gracia
+* Ava Klissouras
+
 ## Usage
 
 To use the dashboard, clone this repository onto your local machine.
