@@ -4,10 +4,10 @@ A dashboard demonstrating text and sentiment analysis on the Harry Potter books.
 
 ## Authors
 
-* Oliver Chen
-* Hannah Enck
+* Oliver Chen (@oxchen12)
+* Hannah Enck (@hannahenck1)
 * Jamil Gracia
-* Ava Klissouras
+* Ava Klissouras (@aklisso)
 
 ## Usage
 
