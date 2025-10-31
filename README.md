@@ -1,6 +1,6 @@
 # Harry Potter Sentiment Analysis
 
-A dashboard demonstrating text and sentiment analysis on the Harry Potter books.
+A dashboard demonstrating text and sentiment analysis on the Harry Potter books. See a preview [here](https://446ad43a-2a11-4cff-9dd2-053699f5ccf4.plotly.app/).
 
 <img width="1325" height="1073" alt="image" src="https://github.com/user-attachments/assets/4a3d784a-57be-411f-87f9-8d0fcc458c24" />
 
