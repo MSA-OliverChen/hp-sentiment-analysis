@@ -8,7 +8,7 @@ A dashboard demonstrating text and sentiment analysis on the Harry Potter books.
 
 * Oliver Chen ([@oxchen12](https://github.com/oxchen12))
 * Hannah Enck ([@hannahenck1](https://github.com/hannahenck1))
-* Jamil Gracia ([@jamilg9](https://github.com/jamilg9)))
+* Jamil Gracia ([@jamilg9](https://github.com/jamilg9))
 * Ava Klissouras ([@aklisso](https://github.com/aklisso))
 
 ## Usage
